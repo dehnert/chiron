@@ -32,7 +32,7 @@ setup(
 
     install_requires=['lxml'],
     extras_require={
-        'zephyr': ['zephyr'],
+        'zephyr': ['PyZephyr'],
         #'test': ['coverage'],
     },
 
