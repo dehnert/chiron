@@ -31,8 +31,11 @@ setup(
     py_modules=["chiron", "chiron_zephyr", "chiron_zulip"],
 
     install_requires=['lxml'],
+    dependency_links = [
+        'https://github.com/ebroder/python-zephyr/tarball/master#egg=PyZephyr',
+    ],
     extras_require={
-        'zephyr': ['git+https://github.com/ebroder/python-zephyr.git#egg=PyZephyr'],
+        'zephyr': ['PyZephyr'],
         #'test': ['coverage'],
     },
 
