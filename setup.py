@@ -32,7 +32,7 @@ setup(
 
     install_requires=['lxml'],
     extras_require={
-        'zephyr': ['PyZephyr'],
+        'zephyr': ['git+https://github.com/ebroder/python-zephyr.git#egg=PyZephyr'],
         #'test': ['coverage'],
     },
 
