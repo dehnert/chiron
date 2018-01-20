@@ -6,4 +6,5 @@ jobs:
        - image: circleci/python:3.5
      steps:
        - checkout
+       - run: apt-get install python-tox
        - run: tox
