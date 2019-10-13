@@ -11,7 +11,7 @@ PATH=/mit/chiron/cron_scripts:/usr/kerberos/sbin:/usr/kerberos/bin:/usr/local/sb
 MAILTO="chiron@mit.edu"
 
 # Add your cron lines here:
-@reboot SHELL=/bin/bash screen -d -m -c ~/chiron/deploy/run.screenrc
+@reboot cd ~/chiron-scripts-venv/src/chiron-bot/deploy/ && screen -d -m -c run.screenrc
 
 
 # Here's a reminder of the cron line format:

@@ -6,7 +6,7 @@ deploy=`dirname "$0"`
 export PYTHONIOENCODING=utf8
 while true; do
     zwrite -c chiron -i prod -m "Starting chiron instance... (args: \"$@\")"
-    $deploy/../main.py "$@"
+    chiron "$@"
     zwrite -c chiron -i prod -m "Finished running chiron instance (args: \"$@\")."
     sleep 60
 done
