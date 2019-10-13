@@ -4,11 +4,11 @@
 
 from optparse import OptionParser #pylint:disable=deprecated-module
 
-import chiron
+from . import engine, fetchers
 
 def init_match_engine():
     """Create a MatchEngine and setup default fetchers and matchers"""
-    match_engine = chiron.MatchEngine()
+    match_engine = engine.MatchEngine()
     add_default_fetchers(match_engine)
     add_default_matchers(match_engine)
     return match_engine
@@ -29,34 +29,34 @@ def add_default_classes(match_engine):
 def add_default_fetchers(match_engine):
     """Add default fetchers (bugtrackers) to MatchEngine"""
     match_engine.add_fetchers({
-        'RFC': chiron.fetch_rfc,
-        'CVE': chiron.fetch_cve,
-        'Launchpad': chiron.fetch_launchpad,
-        'Debian': chiron.fetch_debbugs('http://bugs.debian.org'),
-        'DSA': chiron.fetch_dsa,
-        'Chiron': chiron.fetch_github('sipb', 'chiron'),
-        'zcommit': chiron.fetch_github('sipb', 'zcommit'),
-        'Barnowl Github': chiron.fetch_github('barnowl', 'barnowl'),
-        'Zephyr': chiron.fetch_github('zephyr-im', 'zephyr'),
-        'Zulip': chiron.fetch_github('zulip', 'zulip'),
-        'RHBZ': chiron.fetch_bugzilla('https://bugzilla.redhat.com'),
-        'pag-screen': chiron.fetch_github('sipb', 'pag-screen'),
-        'Mosh': chiron.fetch_github('keithw', 'mosh'),
-        'Scripts FAQ': chiron.fetch_scripts_faq,
-        'ESP': chiron.fetch_github('learning-unlimited', 'ESP-Website'),
-        'Pokedex': chiron.fetch_pokemon,
-        'MIT Class': chiron.fetch_mit_class,
-        'whats': chiron.fetch_whats,
-        'Bible': chiron.fetch_bible,
-        'XKCD': chiron.fetch_xkcd,
-        'Unicode': chiron.fetch_unicode,
-        'Unicode Character': chiron.fetch_unicode_char,
-        'Airport': chiron.fetch_airport,
-        'Assassin': chiron.deal_with_assassin,
-        'SCIENCE': chiron.invoke_science,
-        'Debothena Test': chiron.invoke_debothena,
-        'Undebathena': chiron.undebathena_fun,
-        'Puzzle Editing': chiron.fetch_github('mysteryhunt', 'puzzle-editing'),
+        'RFC': fetchers.fetch_rfc,
+        'CVE': fetchers.fetch_cve,
+        'Launchpad': fetchers.fetch_launchpad,
+        'Debian': fetchers.fetch_debbugs('http://bugs.debian.org'),
+        'DSA': fetchers.fetch_dsa,
+        'Chiron': fetchers.fetch_github('sipb', 'chiron'),
+        'zcommit': fetchers.fetch_github('sipb', 'zcommit'),
+        'Barnowl Github': fetchers.fetch_github('barnowl', 'barnowl'),
+        'Zephyr': fetchers.fetch_github('zephyr-im', 'zephyr'),
+        'Zulip': fetchers.fetch_github('zulip', 'zulip'),
+        'RHBZ': fetchers.fetch_bugzilla('https://bugzilla.redhat.com'),
+        'pag-screen': fetchers.fetch_github('sipb', 'pag-screen'),
+        'Mosh': fetchers.fetch_github('keithw', 'mosh'),
+        'Scripts FAQ': fetchers.fetch_scripts_faq,
+        'ESP': fetchers.fetch_github('learning-unlimited', 'ESP-Website'),
+        'Pokedex': fetchers.fetch_pokemon,
+        'MIT Class': fetchers.fetch_mit_class,
+        'whats': fetchers.fetch_whats,
+        'Bible': fetchers.fetch_bible,
+        'XKCD': fetchers.fetch_xkcd,
+        'Unicode': fetchers.fetch_unicode,
+        'Unicode Character': fetchers.fetch_unicode_char,
+        'Airport': fetchers.fetch_airport,
+        'Assassin': fetchers.deal_with_assassin,
+        'SCIENCE': fetchers.invoke_science,
+        'Debothena Test': fetchers.invoke_debothena,
+        'Undebathena': fetchers.undebathena_fun,
+        'Puzzle Editing': fetchers.fetch_github('mysteryhunt', 'puzzle-editing'),
         })
 
 def add_default_matchers(match_engine):
@@ -156,9 +156,9 @@ def run_with_args(match_engine):
         match_engine.add_classes(options.classes)
 
     if options.protocol == 'zephyr':
-        import chiron_zephyr as chiron_protocol
+        import chiron_bot.chiron_zephyr as chiron_protocol
     elif options.protocol == 'zulip':
-        import chiron_zulip as chiron_protocol
+        import chiron_bot.chiron_zulip as chiron_protocol
     else:
         raise ValueError
     chiron_protocol.main(match_engine, options)

@@ -26,10 +26,7 @@ setup(
         'Topic :: Communications :: Chat',
     ],
 
-    # no packages (though we should probably create a "chiron" package and
-    # just use that)
-    packages=[],
-    py_modules=["chiron", "chiron_zephyr", "chiron_zulip"],
+    packages=['chiron_bot'],
 
     install_requires=['lxml', 'requests[security]', 'backports.csv;python_version<"3"'],
     extras_require={
@@ -44,7 +41,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'chiron=chiron.main:main',
+            'chiron=chiron_bot.main:main',
         ],
     },
 )

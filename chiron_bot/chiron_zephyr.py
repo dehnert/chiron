@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals
 import re
 import sys
 
-import chiron
+from . import engine
 
 try:
     import zephyr
@@ -50,7 +50,7 @@ def zephyr_setup(classes, personals=True):
 
 CC_RE = re.compile(r"CC:(?P<recips>( [a-z./@]+)+) *$", re.MULTILINE)
 
-class ZephyrMessage(chiron.Message):
+class ZephyrMessage(engine.Message):
     """Chiron Zephyr protocol class"""
     def __init__(self, zgram):
         self._zgram = zgram

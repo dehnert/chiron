@@ -5,9 +5,9 @@ from __future__ import print_function, unicode_literals
 
 import unittest
 
-import chiron
+from . import engine
 
-class TestMessage(chiron.Message):
+class TestMessage(engine.Message):
     """Mock Message subclass for tests"""
     def __init__(self, body, cls, is_personal):
         self._body = body
@@ -59,7 +59,7 @@ def sample_fetcher(base):
 class TestEngine(unittest.TestCase):
     """MatchEngine test case"""
     def setUp(self):
-        self.engine = chiron.MatchEngine()
+        self.engine = engine.MatchEngine()
         self.engine.add_fetchers({
             'Sample': sample_fetcher('ticket'),
             'Other': sample_fetcher('other'),

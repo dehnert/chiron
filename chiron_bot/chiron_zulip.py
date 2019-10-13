@@ -4,9 +4,9 @@ from __future__ import print_function, unicode_literals
 
 import zulip
 
-import chiron
+from . import engine
 
-class ZulipMessage(chiron.Message):
+class ZulipMessage(engine.Message):
     """Chiron Zulip protocol class"""
     def __init__(self, client, zulip_msg):
         self._client = client
