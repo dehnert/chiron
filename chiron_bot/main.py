@@ -47,7 +47,7 @@ def add_default_fetchers(match_engine):
         'Pokedex': fetchers.fetch_pokemon,
         'MIT Class': fetchers.fetch_mit_class,
         'whats': fetchers.fetch_whats,
-        'Bible': fetchers.fetch_bible,
+        'NIV Bible': fetchers.fetch_ibibles("niv"),
         'XKCD': fetchers.fetch_xkcd,
         'Unicode': fetchers.fetch_unicode,
         'Unicode Character': fetchers.fetch_unicode_char,
@@ -86,7 +86,7 @@ def add_default_matchers(match_engine):
     match_engine.add_matcher('MIT Class',   r"what's\s([0-9a-z]{1,3}[.][0-9a-z]{1,4})\?\b")
     match_engine.add_matcher('MIT Class',   r'([0-9a-z]{1,3}[.][0-9]{1,4})\b', cond=lambda m: m.is_personal())
     match_engine.add_matcher('whats',       r'whats ([0-9a-z,:;-]{2,10})\b')
-    match_engine.add_matcher('Bible',       r'Bible\(([\w :-]+)\)')
+    match_engine.add_matcher('NIV Bible',   r'Bible\((%s)\)' % fetchers.BIBLE_RE.pattern)
     match_engine.add_matcher('XKCD',        r'\bxkcd[-\s:]#([0-9]{1,5})\b')
     match_engine.add_matcher('Unicode',     r'\bu\+([0-9a-fA-F]{2,6})\b')
     match_engine.add_matcher('Unicode Character',   r'\bunicode\((.)\)')

@@ -7,6 +7,7 @@ Standard chiron fetcher functions
 from __future__ import print_function, unicode_literals
 
 import os
+import re
 import sys
 from random import choice
 
@@ -335,12 +336,12 @@ def undebathena_fun(ticket): #pylint:disable=unused-argument
     filename = choice(os.listdir(directory))
     return url, "%s should divert %s/%s" % (package, directory, filename)
 
-def fetch_bible(verse):
+def fetch_bible_esvapi2(verse):
     #pylint:disable=line-too-long
     r"""
-    Bible fetcher
+    Bible fetcher using esvapi.org v2
 
-    #>>> fetch_bible("John 4:8")
+    #>>> fetch_bible_esvapi2("John 4:8")
     #(u'http://www.esvapi.org/v2/rest/passageQuery?key=TEST&passage=John+4%3A8&output-format=plain-text', u'\n=======================================================\nJohn 4:8\n   [8](For his disciples had gone away into the city to buy food.) (ESV)\n(From The Holy Bible, English Standard Version. See http://www.crosswaybibles.org and http://www.esvapi.org/.)')
     """
     url = 'http://www.esvapi.org/v2/rest/passageQuery'
@@ -349,6 +350,43 @@ def fetch_bible(verse):
     copyright_msg = "(From The Holy Bible, English Standard Version. See http://www.crosswaybibles.org and http://www.esvapi.org/.)"
     text = "\n%s\n%s" % (response.text, copyright_msg, )
     return response.url, text
+
+
+BIBLE_RE = re.compile(r"(?P<book>(\d+ )?[0-9a-z]+) (?P<verse>[0-9:-]+)", re.IGNORECASE)
+STRIP_NL_RE = re.compile("[ \r]*\n[ \r]*")
+
+def fetch_ibibles(translation):
+    r"""
+    Bible fetcher, using ibibles.net
+
+    >>> fetch_ibibles("niv")("mat 5:3-4") #doctest:+NORMALIZE_WHITESPACE,+ELLIPSIS
+    (u'https://ibibles.net/quote.php?niv-mat/5:3-4',
+     u'"Blessed are the poor in spirit, ..., for they will be comforted.')
+    >>> fetch_ibibles("kjv")("Matthew 5:3") #doctest:+NORMALIZE_WHITESPACE
+    (u'https://ibibles.net/quote.php?kjv-Matthew/5:3',
+     u'Blessed are the poor in spirit: for theirs is the kingdom of heaven.')
+    >>> fetch_ibibles("niv")("1 Timothy 3:9") #doctest:+NORMALIZE_WHITESPACE
+    (u'https://ibibles.net/quote.php?niv-1 Timothy/3:9',
+     u'They must keep hold of the deep truths of the faith with a clear conscience.')
+    >>> fetch_ibibles("niv")("1ti 3:9") #doctest:+NORMALIZE_WHITESPACE
+    (u'https://ibibles.net/quote.php?niv-1ti/3:9',
+     u'They must keep hold of the deep truths of the faith with a clear conscience.')
+    """
+
+    def ibibles_fetcher(full_verse):
+        """Inner ibibles fetcher"""
+        parsed_verse = BIBLE_RE.match(full_verse)
+        if not parsed_verse:
+            return None, None
+        params = translation, parsed_verse.group("book"), parsed_verse.group("verse")
+        url = 'https://ibibles.net/quote.php?%s-%s/%s' % params
+        xml, dummy_response = fetch_and_parse_xml(url)
+        body = xml.xpath('//body/text()')
+        text = re.sub(STRIP_NL_RE, '\n', ''.join(body).strip())
+        return url, text
+
+    return ibibles_fetcher
+
 
 def fetch_xkcd(comic):
     """
