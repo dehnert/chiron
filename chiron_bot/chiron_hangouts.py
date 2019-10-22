@@ -8,6 +8,10 @@ import hangups #pylint:disable=import-error
 
 from . import engine
 
+def format_user(user):
+    """Format a Hangouts User object for display"""
+    return "%s %s" % (user.full_name, user.emails)
+
 class HangoutsMessage(engine.Message):
     """Chiron Hangouts protocol class"""
     def __init__(self, client, conv_list, conv_event):
@@ -15,7 +19,7 @@ class HangoutsMessage(engine.Message):
         self._conv_event = conv_event
         self._conversation = conv_list.get(conv_event.conversation_id)
         self._sender = conv_list._user_list.get_user(conv_event.user_id)
-        print("conversation has users: %s" % (self._conversation.users, ))
+        self._friendly_users = [format_user(user) for user in self._conversation.users]
 
     def body(self):
         return self._conv_event.text
@@ -27,16 +31,16 @@ class HangoutsMessage(engine.Message):
         return ""
 
     def sender(self):
-        return self._sender
+        return format_user(self._sender)
 
     def recipient(self):
-        return self._conversation.name or self._conversation.users
+        return self._conversation.name or self._friendly_users
 
     def is_personal(self):
         return len(self._conversation.users) <= 2
 
     def skip_message(self):
-        return self.sender().is_self
+        return self._sender.is_self
 
     def send_reply(self, messages):
         segments = []
@@ -58,7 +62,8 @@ class HangoutsMessage(engine.Message):
             segments.append(hangups.ChatMessageSegment("No ticket number found in message."))
 
         if messages or self.is_personal():
-            print("  ->", "sending reply with %d segments" % (len(segments), ))
+            print("  ->", "sending reply with %d segments and %d messages" %
+                  (len(segments), len(messages)))
             # Py3.7: switch to asyncio.get_running_loop()
             loop = asyncio.get_event_loop()
             loop.create_task(self._conversation.send_message(segments))
@@ -70,7 +75,6 @@ class HangoutsMessage(engine.Message):
             """Hangouts message callback"""
             if isinstance(conv_event, hangups.ChatMessageEvent):
                 msg = cls(client, conv_list, conv_event)
-                print("conv_event: ", conv_event.__dict__)
                 match_engine.process(msg)
         return process
 
