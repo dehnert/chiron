@@ -30,6 +30,9 @@ class ZulipMessage(engine.Message):
     def is_personal(self):
         return self._zulip['type'] == 'private'
 
+    def skip_message(self):
+        return '-bot' in self.sender()
+
     def send_reply(self, messages):
         zulip_msg = self._zulip
         reply = {}
@@ -57,11 +60,7 @@ class ZulipMessage(engine.Message):
         def process(zulip_msg):
             """Zulip message callback"""
             msg = cls(client, zulip_msg)
-            if '-bot' in msg.sender():
-                print("Skipping message from %s:" % (msg.sender(), ))
-                msg.log_arrival()
-            else:
-                match_engine.process(msg)
+            match_engine.process(msg)
         return process
 
     @classmethod

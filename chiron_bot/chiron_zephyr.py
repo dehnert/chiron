@@ -77,6 +77,9 @@ class ZephyrMessage(engine.Message):
     def is_personal(self):
         return bool(self._zgram.recipient)
 
+    def skip_message(self):
+        return self._zgram.opcode.lower() in ('auto', 'ping')
+
     def _prep_zgram(self):
         zgram = self._zgram
         zreply = zephyr.ZNotice()
@@ -134,8 +137,6 @@ class ZephyrMessage(engine.Message):
         while True:
             zgram = zephyr.receive(True)
             if not zgram:
-                continue
-            if zgram.opcode.lower() in ('auto', 'ping'):
                 continue
             msg = cls(zgram)
             match_engine.process(msg)

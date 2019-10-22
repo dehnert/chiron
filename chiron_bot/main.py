@@ -3,6 +3,7 @@
 
 
 from optparse import OptionParser #pylint:disable=deprecated-module
+import sys
 
 from . import engine, fetchers
 
@@ -125,6 +126,7 @@ def parse_args():
                       help='Disable replying to personals')
     parser.add_option('-p', '--protocol', dest='protocol', default='zephyr', )
     parser.add_option('--zulip-rc', dest='zuliprc', default=None)
+    parser.add_option('--hangouts-token', default=None)
     parser.add_option('--default-classes', dest='default_classes',
                       default=False, action='store_true',
                       help='Sub to a default set of classes')
@@ -134,11 +136,13 @@ def parse_args():
     (options, args) = parser.parse_args()
     if args:
         parser.error("got %d arguments; expected none" % (len(args), ))
-    if options.protocol not in ('zephyr', 'zulip'):
+    if options.protocol not in ('zephyr', 'zulip', 'hangouts'):
         parser.error("the only supported protocols are zephyr and zulip; you requested %s" %
                      (options.protocol, ))
     if options.zuliprc and options.protocol != 'zulip':
         parser.error('Protocol must be "zulip" if --zulip-rc is provided.')
+    if options.hangouts_token and options.protocol != 'hangouts':
+        parser.error('Protocol must be "hangouts" if --hangouts-token is provided.')
     if options.protocol != 'zephyr':
         if options.default_classes or options.classes:
             parser.error('Protocol must be "zephyr" if --default-classes or --class is provided.')
@@ -159,6 +163,10 @@ def run_with_args(match_engine):
         import chiron_bot.chiron_zephyr as chiron_protocol
     elif options.protocol == 'zulip':
         import chiron_bot.chiron_zulip as chiron_protocol
+    elif options.protocol == 'hangouts':
+        assert sys.version_info.major > 2, "Hangouts requires Python 3"
+        #pylint:disable=no-name-in-module,import-error
+        import chiron_bot.chiron_hangouts as chiron_protocol
     else:
         raise ValueError
     chiron_protocol.main(match_engine, options)

@@ -33,6 +33,7 @@ setup(
         #'zephyr': ['-r requirements.zephyr.txt'],
         'test': ['unittest-xml-reporting'],
         #'test': ['coverage'],
+        'hangouts': ['hangups'],
         'zulip': ['zulip'],
     },
 

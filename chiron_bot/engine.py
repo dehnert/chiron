@@ -48,6 +48,13 @@ class Message(object):
     def is_personal(self):
         raise NotImplementedError
 
+    def skip_message(self):
+        """Returns whether this message should be skipped
+
+        At a minimum, this probably needs to recognize messages from Chiron,
+        to avoid reply loops."""
+        raise NotImplementedError
+
     def context(self, ):
         # We have default fetchers for some classes. This adds two more ways
         # to trigger default fetchers behavior:
@@ -150,6 +157,9 @@ class MatchEngine(object):
 
     def process(self, msg, ):
         msg.log_arrival()
+        if msg.skip_message():
+            print("  -> skipping message from %s" % (msg.sender(), ))
+            return
         if self.ignore_personals and msg.is_personal():
             print("  -> ignoring personal")
             return

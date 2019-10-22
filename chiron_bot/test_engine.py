@@ -32,6 +32,11 @@ class TestMessage(engine.Message):
     def is_personal(self):
         return self._is_personal
 
+    def skip_message(self):
+        #pylint:disable=fixme
+        # TODO: add a test that this functionality works?
+        return False
+
     def send_reply(self, messages):
         self._replies.append(messages)
 
